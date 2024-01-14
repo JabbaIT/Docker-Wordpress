@@ -1,0 +1,40 @@
+services:
+  # Database
+  db:
+    container_name: wp_db    
+    image: mariadb:10.6.4-focal    
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD={root_password}
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD={db_password}
+    expose:
+      - 3306
+  
+  # Wordpress
+  wordpress:
+    container_name: wp
+    image: wordpress:latest
+    volumes:
+      - wp_data:/var/www/html
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    expose:
+      - 80
+      - 443
+    environment:
+      - WORDPRESS_DB_HOST=db      
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD={db_password}
+      - WORDPRESS_DB_NAME=wordpress
+
+# Volumes
+volumes:
+  db_data:
+  wp_data:
